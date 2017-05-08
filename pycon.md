@@ -81,7 +81,7 @@ IPython 5 will still be stable (LTS). So we'd like Python 2 user to
 
 ## Core of the problem
 
-```python
+```bash
 $ pip install ipython --upgrade
 Installing ipython... doing magic... success
 
@@ -228,23 +228,64 @@ This will result in installing incompatible versions.
 
 # Defensive packaging
 
-Handle everything that can happen, then deal with everything that can't.
+Handle everything that can happen,  
+deal with everything that can't.
 
 -- 
 
-## Good error messages
+## Principle #0
 
-Keep setup.py python 2 compatible. 
+Update your documentation and scripts.
 
-Fails **before** setup()
+## Principle #1
 
-If you hit this case the most probable reason : ** pip is out of date**. 
+Keep all package entrances python 2 compatible,  
+    but have them err early.
+
+## Principle #2 
+
+For clear error messages, 
+    use multiple lines.
 
 --
 
-**Ask user to update pip, ** Do not let installation finish.
+### Use `$ pip install .`
+
+Do not use `setup.py <...>` directly
+
+Update your documentation and scripts to use `pip install [-e] .` 
+
+**NB**:Invoking `setup.py` directly will *not* respect the `requires_python`.
 
 -- 
+
+### Keep ``setup.py`` python 2 compatible. 
+
+If installation fails **before** `setup()`, the most probable reason: 
+
+**pip < 9**. 
+
+Do not let the installation finish!
+
+Instead: **ask users to update pip**.
+
+-- 
+
+### Keep `__init__.py` python 2 compatible
+
+Raise your own error message (inspiration from before).
+
+User will figure out way to avoid `setup.py`. e.g.:
+
+```bash
+$ pip install -e . 
+$ ...
+$ git pull  # update without install
+```
+
+--
+
+In IPython 6.0 both `setup.py` and `__init__.py`:
 
 ```python
 if sys.version_info < (3, 3):
@@ -260,44 +301,19 @@ Make sure you have pip >= 9.0.1.
     sys.exit(error)
 ```
 
--- 
 
-## Keep `__init__.py` python 2 compatible
 
-Raise your own error message (inspiration from before).
+----
 
-User will figure out way to avoid `setup.py`. e.g.:
-
-```bash
-$ pip install -e . 
-$ ...
-$ git pull  # update without install
-```
-
--- 
-
-## $ pip install .
-
-Do not use `setup.py <...>` directly
-
-Update your documentation and scripts to use `pip install [-e] .` 
-
-Invoking `setup.py` directly will not respect the `requires_python`
-
--- 
-## Use multiline error messages
---
-
-# For IPython 6.0
-
+# Results from IPython 6.0
 
 ## First Week :
-  - Pip 9 - Python 3 : 45.586 
-  - Pip 8 - Python 2 : 92.386 – 2x - Not Ok
+  - Pip 9 - Python 3 : 45586 
+  - Pip 8 - Python 2 : 92386 – 2x - Not Ok
 
 ## Second Week :
-  - Pip 9 - Python 3 :&nbsp;40.996 
-  - Pip 8 - Python 2 : &nbsp;&nbsp;9.973 – 0.25x - Still not Ok, but better
+  - Pip 9 - Python 3 : 40996 
+  - Pip 8 - Python 2 : 9973 – 0.25x - Still not Ok, but better
 
 -- 
 
