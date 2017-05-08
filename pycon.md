@@ -204,7 +204,7 @@ Do not invoke `setup.py` directly.
 
 `python_requires` metadata comes from [pep 345](https://www.python.org/dev/peps/pep-0345/#requires-python), 2005.
 
-But nothing implements/understand it. 
+But for 11 years nothing implemented or understood it. 
 
 -- 
 
@@ -305,15 +305,19 @@ Make sure you have pip >= 9.0.1.
 
 ----
 
-# Results from IPython 6.0
+# Results
 
-## First Week :
+## IPython 6.0, \#downloads:
+
+### First Week:
   - Pip 9 - Python 3 : 45586 
-  - Pip 8 - Python 2 : 92386 – 2x - Not Ok
+  - Pip 8 - Python 2 : 92386  
+\>2×, not good
 
-## Second Week :
+### Second Week:
   - Pip 9 - Python 3 : 40996 
-  - Pip 8 - Python 2 : 9973 – 0.25x - Still not Ok, but better
+  - Pip 8 - Python 2 : 9973  
+\> 0.25 ×, still not great, but better!
 
 -- 
 
@@ -331,9 +335,14 @@ Two.
 
 -- 
 
-## The old pep
+## Setuptools
 
-Pep 345 [specifies](https://www.python.org/dev/peps/pep-0345/#requires-python)
+As of [setuptools 24.2](https://github.com/pypa/setuptools/pull/631/), thanks to @xavfernandez, the  
+`python_requires` keyword in you `setup()` is adhered to when building a package.
+
+## The old PEP
+
+[PEP 345](https://www.python.org/dev/peps/pep-0345/#requires-python)
 
     Requires-Python
     ===============
@@ -352,18 +361,20 @@ Pep 345 [specifies](https://www.python.org/dev/peps/pep-0345/#requires-python)
         Requires-Python: >=2.5,<2.7
 
 
-Ok ! That's great can we use it ? And how to use it ?
+Great! How do we use it?
 
 
 -- 
 
 ## Pypi
 
-Pretty easy, we want pip to have access to that **before** downloading the
-sdist, because we don't want to download all the sourcedist just to discover
-they are not compatible right ? 
+Pip should get Require-Python info **before** downloading the sdist.  
 
-Pip does that via `/simple/` repository url:
+Pip does that via the `/simple/` repository url:
+
+Note: No need to download all sdists just to discover they are incompatible. 
+
+
 
 -- 
 
@@ -371,33 +382,34 @@ Pip does that via `/simple/` repository url:
 
 ```html
 <!DOCTYPE html><html><head><title>Links for pip</title></head><body><h1>Links for pip</h1>
-<a href=".../pip-1.3.tar.gz" >pip-1.3.tar.gz</a><br/>
-<a href=".../pip-8.0.0-py2.py3-none-any.whl" >pip-8.0.0-py2.py3-none-any.whl</a><br/>
-<a href=".../pip-6.0.4.tar.gz" >pip-6.0.4.tar.gz</a><br/>
-<a href=".../pip-0.3.1.tar.gz" >pip-0.3.1.tar.gz</a><br/>
-<a href=".../pip-1.0.1.tar.gz" >pip-1.0.1.tar.gz</a><br/>
-<a data-requires-python="&gt;=2.6,!=3.0.*" href=".../pip-9.0.1.tar.gz" >pip-9.0.1.tar.gz</a><br/>
-<a href=".../pip-1.0.2.tar.gz" >pip-1.0.2.tar.gz</a><br/>
-<a href=".../pip-0.3.tar.gz" >pip-0.3.tar.gz</a><br/>
-<a href=".../pip-0.8.2.tar.gz" >pip-0.8.2.tar.gz</a><br/>
-<a href=".../pip-0.2.1.tar.gz" >pip-0.2.1.tar.gz</a><br/>
+<a href="…/pip-1.3.tar.gz" >pip-1.3.tar.gz</a><br/>
+<a href="…/pip-8.0.0-py2.py3-none-any.whl" >pip-8.0.0-py2.py3-none-any.whl</a><br/>
+<a href="…/pip-6.0.4.tar.gz" >pip-6.0.4.tar.gz</a><br/>
+<a href="…/pip-0.3.1.tar.gz" >pip-0.3.1.tar.gz</a><br/>
+<a href="…/pip-1.0.1.tar.gz" >pip-1.0.1.tar.gz</a><br/>
+<a data-requires-python="&gt;=2.6,!=3.0.*" href="…/pip-9.0.1.tar.gz" >pip-9.0.1.tar.gz</a><br/>
+<a href="…/pip-1.0.2.tar.gz" >pip-1.0.2.tar.gz</a><br/>
+<a href="…/pip-0.3.tar.gz" >pip-0.3.tar.gz</a><br/>
+<a href="…/pip-0.8.2.tar.gz" >pip-0.8.2.tar.gz</a><br/>
+<a href="…/pip-0.2.1.tar.gz" >pip-0.2.1.tar.gz</a><br/>
+⋮
 ```
 
 -- 
 
-List files and now have `data-python-requires` with version
+List files and now have `data-requires-python` with version
 specifications for each files.
 
-This was done by amending pep 503.
+This was done by amending [PEP 503](https://www.python.org/dev/peps/pep-0503/).
 
 If you are running (or maintain) a PyPI proxy please make sure it does
-understand the new `data-python-require`.
+understand the new `data-requires-python`.
 
 -- 
 
 ## Pip
 
-Pip 9+ understand `data-requires-python` 
+Pip 9+ understands `data-requires-python` 
 
 https://github.com/pypa/pip/pull/3877
 
@@ -414,59 +426,80 @@ at some point.
 
 ## Belly of the beast 
 
-### PyPI+Warehouse patches
+### Patching PyPI & Warehouse
 
-You might all know PyPI, that's usually where most of you may download your
-packages from. Pip does interrogate PyPI to install packages. PyPI is old. PyPI
-testing is sparse (understand non existant), and documentation is... ~~non
-existant~~ not alway accurate, so not that easy to run locally.
+You likely know PyPI, that's usually where most people download their
+packages from when then `pip install`.
+
+But PyPI is old, its testing is sparse (i.e., non-existant), and its documentation is… 
+~~non-existant~~ not always accurate. 
+
+As a result, it's not easy to run PyPI locally.
 
 -- 
 
-The PyPA have stated developing Warehouse (the new PyPI), which is well
-documented, 100% test coverage and provided with a one liner to run it locally
+The PyPA stated developing Warehouse (the new, improved PyPI), which is well
+documented, with 100% test coverage. It even has a one liner to run it locally
 using Docker. 
 
 -- 
 
-In production PyPI and warehouse are connected to the same Postgres database.
-So any update need to be coordinated. 
+In production, PyPI and warehouse are connected to the same Postgres database.  
+So any updates need to be coördinated between them. 
 
 -- 
 
-Seem pretty easy, when you requires `/simple/<package>` webpage the sql query
-should simply:
+It seems like it should be easy… 
 
-    SELECT * from release_files where package_name=package
+When you need the `/simple/<package>` webpage the sql query should simply be:
 
-And build a list of href. Seem like a solved Problem right ? Except reading the
-actual pep teh requires-python are per **release** not per file (ie you can't
-have a wheel which is python 3.3+ and a sdist 3.2+)
+```sql
+SELECT * from release_files where package_name=package
+```
 
--- 
+And build a list of href. 
 
-Release is a different table, so we could "simply" use a JOIN. Except with the
-number of available packages the join is too slow. We can't really refactor
-the all database format because PyPI is not really tested.
-
-We ended up using a postgress trigger with UPSERT (that simplify some logic a
-lot) that update the `release_files` table as soon as it (or `release`) get
-updated.  
-
-We've improved the documentation of warehouse, and PyPI, so now you should be
-able to contribute back more easily. Despite not being well tested there is a
-number of low hanging fruit ! Either cleaning up the codebase, or bringing
-features from PyPI to Warehouse.
-
+Problem solved, right? 
 
 -- 
 
-## Setuptools
+Unforutnately PEP 345 specifies that `requires-python` is an attribute 
+on **releases**, not **release files**.
 
-We did not do the patches, ut it allow you to set metadata
+I.e., you can't have a wheel which is python 3.3+ and a sdist 3.2+.
 
+↑ TODO: Matthias, I don't follow this point… why would you want wheels vs sdists 
+from the same release to be different?
 
+-- 
 
+Because `release` is a different table from `release_files`, in theory, 
+we could use a `JOIN` for the two tables. 
+
+Except, with the number of available packages, a join is too slow. 
+
+On the other hand, we cannot safely refactor the database because PyPI is not well tested.
+
+--
+
+#### Solution: A trigger on UPSERT
+
+We implemented a trigger that updates the `release_files` table when it or `release` are 
+updated or a row is inserted in either table.
+
+Detail: `UPSERT` is a combination of update and insert, using it greatly simplifies the logic.
+
+--
+
+#### Final comments: Warehouse & PyPI
+
+We've improved the documentation of both warehouse and PyPI, to make new contributions easier.
+
+And you should contribute — there's tonnes of low hanging fruit!
+
+You can add tests, clean up the codebase, or bring features from PyPI to Warehouse.
+
+-- 
 
 
 ----
