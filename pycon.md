@@ -68,18 +68,25 @@ Resources on how to stop support with minimal frustration for users
 
 ![p3s-list](p3s-list.png)
 
+Note: We should have text notes here to simplify reading this off.
+
 --
 
 ![p3s-list](p3s-timeline.png)
+
+Note: We should have text notes here to simplify reading this off.
 
 ----
 
 # Scratch your own itch
 
-We want to release IPython 6, the code base will be Python 3 only. 
-IPython 5 will still be stable (LTS). So we'd like Python 2 user to
+We released IPython 6, the code base is Python 3 only.
 
-    $ pip install ipython
+IPython 5 will still be stable (LTS). So if a Python 2 user runs
+
+    $ pip install ipython -U
+
+it should install the latest version of IPython 5, not IPython 6!
 
 --
 
@@ -175,6 +182,8 @@ But it does not work beyond Python 3.9...
 
 (insert a lot of work here)
 
+TODO: ↑ is that a meta comment for you and me? 
+
 As Raymond Hettinger would say if he is in the room
 
 -- 
@@ -212,18 +221,19 @@ But for 11 years nothing implemented or understood it.
 
 -- 
 
-### setuptools > 24.3 
+### setuptools >= 24.3 
 
-The `requires_python` keyword in known only by setuptools versions > 24.3.
+The `python_requires` keyword in known only by setuptools versions > 24.3.
 
 - Required to **build** the sdist/wheel and publish the package
 - Required to **install** from sdist. 
 
 -- 
 
-### Require pip 9+
+### pip >= 9.0.1
 
-Old versions of pip will gladly ignore this metadata. 
+From PyPI:
+Versions of pip < 9 ignore `data-requires-python` attributes. 
 
 This will result in installing incompatible versions.
 
@@ -366,8 +376,10 @@ Great! How do we use it?
 
 ## Setuptools
 
-As of [setuptools 24.2](https://github.com/pypa/setuptools/pull/631/), thanks to @xavfernandez, the  
-`python_requires` keyword in you `setup()` is adhered to when building a package.
+As of [setuptools 24.2](https://github.com/pypa/setuptools/pull/631/), 
+your `setup()` call follows the `python_requires` keyword when building a package from source.
+
+Kudos to @xavfernandez for making that possible.
 
 -- 
 
@@ -378,8 +390,6 @@ Pip should get Require-Python info **before** downloading the sdist.
 Pip does that via the `/simple/` repository url:
 
 Note: No need to download all sdists just to discover they are incompatible. 
-
-
 
 -- 
 
@@ -414,7 +424,7 @@ understand the new `data-requires-python`.
 
 ## Pip
 
-Pip 9+ understands `data-requires-python` 
+Pip 9+ understands `data-requires-python`.
 
 https://github.com/pypa/pip/pull/3877
 
