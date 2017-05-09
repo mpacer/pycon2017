@@ -12,7 +12,7 @@ revealOptions:
 
 ## Ending Python2 compatibility in a user friendly manner
 
-M. Bussonnier & M. Pacer
+M. Bussonnier & M Pacer
 
 Slides available at https://short.url
 
@@ -20,24 +20,24 @@ Slides available at https://short.url
 
 # About us
 
-We have been Both Working on the IPython and  Jupyter Project for respectively
-5 and 1 year. 
+We have been working on the IPython and  Jupyter Project for 
+5 and ~1 year. 
 
 github:@Carreau/twitter:@Mbussonn
 
 
-github:@mpacer/twitter:@
+github:@mpacer/twitter:@mdpacer
 
 ----
 
-## What this talks is **not** about
+## What this talk is **not** about
 
-- Is Python 2 or 3 the right choice 
-- Should I migrate to Python3-only
+- Is Python 2 or 3 the right choice?
+- Should I migrate to Python3-only?
 
 --
 
-## What this talk is about
+## What this talk **is** about
 
 We decided to migrate IPython to Python 3 only
 
@@ -45,9 +45,11 @@ Ho to make the transition the least frustrating for users and dev.
 
 --
 
-## 2 vs 3 is an **example**
+## Python 2 vs 3 is an **example**
 
-This talks does apply to stopping support for 2.6, or 3.3
+The lessons we've learned are not specific a python2 to python3 transition. 
+
+Our talk applies to stopping support for any version (e.g., 2.6 or 3.3).
 
 ----
 
@@ -55,7 +57,7 @@ This talks does apply to stopping support for 2.6, or 3.3
 
 [www.python3statement.org](http://www.python3statement.org/)
 
-List of who is stopping support when. 
+List of who is stopping Python 2 support when. 
 Resources on how to stop support with minimal frustration for users
 
 --
@@ -180,7 +182,7 @@ As Raymond Hettinger would say if he is in the room
 
 # (re)-Introducting `python_requires`
 
-Since December with pip 9.0+, and recent setuptools:
+Since December with pip 9.0+, and setuptools 24.3+:
 
 ```python
 # setup.py
@@ -190,15 +192,17 @@ setup(...,
 )
 ```
 
-And `pip install .` – Do not invoke `setup.py` directly.
+And `pip install .` 
+
+Do not invoke `setup.py` directly.
 
 -- 
 
-## In details
+## In greater detail
 
 -- 
 
-`python_requires` metadata comes from [pep 345], 2005.
+`python_requires` metadata comes from [pep 345](https://www.python.org/dev/peps/pep-0345/#requires-python), 2005.
 
 But nothing implements/understand it. 
 
@@ -217,12 +221,12 @@ But nothing implements/understand it.
 
 Old versions of pip will gladly ignore this metadata. 
 
-And will install incompatible versions.
+This will result in installing incompatible versions.
 
 
 ---- 
 
-# Failures modes
+# Defensive packaging
 
 Handle everything that can happen, then deal with everything that can't.
 
