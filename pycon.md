@@ -32,16 +32,20 @@ github:@mpacer/twitter:@mdpacer
 
 ## What this talk is **not** about
 
-- Is Python 2 or 3 the right choice?
+- Is Python 2 or 3 the right choice? 
 - Should I migrate to Python3-only?
 
 --
 
 ## What this talk **is** about
 
-We decided to migrate IPython to Python 3 only
+We migrated IPython to Python 3 only. 
 
-Ho to make the transition the least frustrating for users and dev.
+We care about *all* of our users, Python 2 and 3 alike.
+
+We want to make the transition the least frustrating for users and dev.
+
+We'll be describing how we did this.
 
 --
 
@@ -153,7 +157,7 @@ if is_tar_gz(file):
             self._log_skipped_link(
                 link, 'Python version is incorrect')
             return
-```                
+```
 
 -- 
 
@@ -182,7 +186,7 @@ As Raymond Hettinger would say if he is in the room
 
 # (re)-Introducting `python_requires`
 
-Since December with pip 9.0+, and setuptools 24.3+:
+Since December with pip 9.0.1, and setuptools 24.3:
 
 ```python
 # setup.py
@@ -192,15 +196,15 @@ setup(...,
 )
 ```
 
-And `pip install .` 
+Use `pip install [-e] [.]` to adhere to `python_requires`. 
 
-Do not invoke `setup.py` directly.
+**N.B.**: Do not invoke `setup.py` directly!
 
 -- 
 
 ## In greater detail
 
--- 
+--
 
 `python_requires` metadata comes from [pep 345](https://www.python.org/dev/peps/pep-0345/#requires-python), 2005.
 
@@ -208,9 +212,9 @@ But for 11 years nothing implemented or understood it.
 
 -- 
 
-### Requires setuptools > 24.3 
+### setuptools > 24.3 
 
-`requires_python` is an unknown keyword in previous setuptools version.
+The `requires_python` keyword in known only by setuptools versions > 24.3.
 
 - Required to **build** the sdist/wheel and publish the package
 - Required to **install** from sdist. 
@@ -244,7 +248,7 @@ Keep all package entrances python 2 compatible,
 
 ## Principle #2 
 
-For clear error messages, 
+For clear error messages,  
     use multiple lines.
 
 --
@@ -335,11 +339,6 @@ Two.
 
 -- 
 
-## Setuptools
-
-As of [setuptools 24.2](https://github.com/pypa/setuptools/pull/631/), thanks to @xavfernandez, the  
-`python_requires` keyword in you `setup()` is adhered to when building a package.
-
 ## The old PEP
 
 [PEP 345](https://www.python.org/dev/peps/pep-0345/#requires-python)
@@ -363,6 +362,12 @@ As of [setuptools 24.2](https://github.com/pypa/setuptools/pull/631/), thanks to
 
 Great! How do we use it?
 
+-- 
+
+## Setuptools
+
+As of [setuptools 24.2](https://github.com/pypa/setuptools/pull/631/), thanks to @xavfernandez, the  
+`python_requires` keyword in you `setup()` is adhered to when building a package.
 
 -- 
 
