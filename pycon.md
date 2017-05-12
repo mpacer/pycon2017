@@ -12,7 +12,7 @@ revealOptions:
 
 ## Ending Python2 compatibility in a user friendly manner
 
-M. Bussonnier & M Pacer
+M Bussonnier & M Pacer
 
 Slides available at https://short.url
 
@@ -178,7 +178,7 @@ But it does not work beyond Python 3.9...
 
 ----
 
-## The new way : Python-Requires
+# The new way : Python-Requires
 
 (insert a lot of work here)
 
@@ -247,19 +247,15 @@ deal with everything that can't.
 
 -- 
 
-## Principle #0
+## Principle 
 
-Update your documentation and scripts.
+1. Update your documentation and scripts.
 
-## Principle #1
+2. Keep all package entrances python 2 compatible,  
+   but have them err early.<!-- .element: class="fragment" data-fragment-index="1" -->
 
-Keep all package entrances python 2 compatible,  
-    but have them err early.
-
-## Principle #2 
-
-For clear error messages,  
-    use multiple lines.
+3. For clear error messages,   
+   use multiple lines.<!-- .element: class="fragment" data-fragment-index="2" -->
 
 --
 
@@ -324,13 +320,13 @@ Make sure you have pip >= 9.0.1.
 ## IPython 6.0, \#downloads:
 
 ### First Week:
-  - Pip 9 - Python 3 : 45586 
-  - Pip 8 - Python 2 : 92386  
+  - Pip 9 - Python 3 : 45 586 
+  - Pip 8 - Python 2 : 92 386  
 \>2×, not good
 
 ### Second Week:
-  - Pip 9 - Python 3 : 40996 
-  - Pip 8 - Python 2 : 9973  
+  - Pip 9 - Python 3 : 48 389 
+  - Pip 8 - Python 2 : 13 293  
 \> 0.25 ×, still not great, but better!
 
 -- 
@@ -483,7 +479,7 @@ on **releases**, not **release files**.
 
 I.e., you can't have a wheel which is python 3.3+ and a sdist 3.2+.
 
-↑ TODO: Matthias, I don't follow this point… why would you want wheels vs sdists 
+TODO: Matthias, I don't follow this point… why would you want wheels vs sdists 
 from the same release to be different?
 
 -- 
