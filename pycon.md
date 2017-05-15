@@ -250,23 +250,24 @@ This will result in installing incompatible versions.
 
 Update your documentation and scripts to use `pip install [-e] .`. 
 
-Reiteration: Do not use `setup.py <…>` will ignore the `requires_python`.
+Reiteration: Do not use `python setup.py <…>`;  
+it ignores `requires_python`.
 
 -- 
 
 ## Keep ``setup.py`` python 2 compatible. 
 
-If installation fails **before** `setup()`, the most probable reason: 
+If installation fails before `setup()`, the most probable reason: 
 
 **pip < 9**. 
 
 Catch this, and don't let installation finish!
 
-Instead: **explicitly ask users to update pip**.
+Instead: explicitly ask users to update pip.
 
 --
 
-E.g.,: in `setup.py`: 
+E.g.,: in `setup.py`, before `setup()`: 
 
 ```python
 if sys.version_info < (3, 3):
@@ -285,7 +286,7 @@ Make sure you have pip >= 9.0.1.
 
 ## Keep `__init__.py` python 2 compatible
 
-User will figure out way to avoid `setup.py`. e.g.:
+Users will still find ways to avoid `pip` and `setup.py`. e.g.:
 
 ```bash
 $ pip install -e . 
@@ -294,9 +295,10 @@ $ git pull  # update without install
 ```
 
 --
-E.g., in `__init__.py`:
+E.g., in `__init__.py` before module imports:
 
 ```python
+import sys
 if sys.version_info < (3,3):
     raise ImportError(
 """
@@ -311,7 +313,6 @@ See IPython `README.rst` file for more information:
 """)
 ```
 
-
 ----
 
 # Results
@@ -321,7 +322,7 @@ See IPython `README.rst` file for more information:
 ### First Week:
   - Pip 9 - Python 3 : 45 586 
   - Pip 8 - Python 2 : 92 386  
-\>2×, not good
+\> 2×, not good
 
 ### Second Week:
   - Pip 9 - Python 3 : 48 389 
@@ -334,7 +335,7 @@ See IPython `README.rst` file for more information:
 
 Two. 
 
-- During RC : `python setup.py install` got 6.0 on Python 2 – now documented.
+- During RC: `python setup.py install` got 6.0 on Python 2 – now documented.
 
 - "My Bad I did not read the error message"
 
