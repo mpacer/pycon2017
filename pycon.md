@@ -184,7 +184,7 @@ As Raymond Hettinger would say if he is in the room
 
 ----
 
-# The new* way: Python-Requires
+# The new\* way: Python-Requires
 <!--# (re)-Introducting `python_requires`-->
 
 Since December with pip 9.0.1, and setuptools 24.3:
@@ -197,7 +197,7 @@ setup(...,
 )
 ```
 
-Use `pip install [-e] [.]` to adhere to `python_requires`. 
+Use `pip install` and it will adhere to `python_requires`. 
 
 **N.B.**: Do not invoke `setup.py` directly!
 
@@ -234,60 +234,39 @@ This will result in installing incompatible versions.
 
 # Defensive packaging
 
-Handle everything that can happen,  
-deal with everything that can't.
+1. Update your documentation and scripts to use `pip`.
 
--- 
+2. Keep `setup.py` and `__init__.py` python 2 compatible,  
+   but have them err early. 
+   <!-- .element: class="fragment" data-fragment-index="1" -->
 
-## Principle 
-
-1. Update your documentation and scripts.
-
-2. Keep all package entrances python 2 compatible,  
-   but have them err early.<!-- .element: class="fragment" data-fragment-index="1" -->
-
-3. For clear error messages,   
-   use multiple lines.<!-- .element: class="fragment" data-fragment-index="2" -->
+3. For clear error messages in complicated situations,   
+   use multiple lines.
+   <!-- .element: class="fragment" data-fragment-index="2" -->
 
 --
 
-### Use `$ pip install .`
+## Direct users to `pip install`
 
-Do not use `setup.py <...>` directly
+Update your documentation and scripts to use `pip install [-e] .`. 
 
-Update your documentation and scripts to use `pip install [-e] .` 
-
-**NB**:Invoking `setup.py` directly will *not* respect the `requires_python`.
+Reiteration: Do not use `setup.py <…>` will ignore the `requires_python`.
 
 -- 
 
-### Keep ``setup.py`` python 2 compatible. 
+## Keep ``setup.py`` python 2 compatible. 
 
 If installation fails **before** `setup()`, the most probable reason: 
 
 **pip < 9**. 
 
-Do not let the installation finish!
+Catch this, and don't let installation finish!
 
-Instead: **ask users to update pip**.
-
--- 
-
-### Keep `__init__.py` python 2 compatible
-
-Raise your own error message (inspiration from before).
-
-User will figure out way to avoid `setup.py`. e.g.:
-
-```bash
-$ pip install -e . 
-$ ...
-$ git pull  # update without install
-```
+Instead: **explicitly ask users to update pip**.
 
 --
 
-In IPython 6.0 both `setup.py` and `__init__.py`:
+E.g.,: in `setup.py`: 
 
 ```python
 if sys.version_info < (3, 3):
@@ -302,7 +281,35 @@ Make sure you have pip >= 9.0.1.
 """
     sys.exit(error)
 ```
+-- 
 
+## Keep `__init__.py` python 2 compatible
+
+User will figure out way to avoid `setup.py`. e.g.:
+
+```bash
+$ pip install -e . 
+$ ...
+$ git pull  # update without install
+```
+
+--
+E.g., in `__init__.py`:
+
+```python
+if sys.version_info < (3,3):
+    raise ImportError(
+"""
+IPython 6.0+ does not support Python 2.6, 2.7, 3.0,
+3.1, or 3.2. Beginning with IPython 6.0, Python 3.3
+and above is required.
+
+See IPython `README.rst` file for more information:
+
+    https://github.com/ipython/ipython/blob/master/README.rst
+
+""")
+```
 
 
 ----
