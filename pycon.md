@@ -20,11 +20,10 @@ Slides available at https://short.url
 
 # About us
 
-We have been working on the IPython and  Jupyter Project for 
+We have been working on the IPython and Jupyter projects for 
 5 and ~1 year. 
 
 github:@Carreau/twitter:@Mbussonn
-
 
 github:@mpacer/twitter:@mdpacer
 
@@ -176,24 +175,17 @@ be future proof.
 
 But it does not work beyond Python 3.9... 
 
-----
-
-# The new way : Python-Requires
-
-(insert a lot of work here)
-
-TODO: ↑ is that a meta comment for you and me? 
+--
 
 As Raymond Hettinger would say if he is in the room
 
--- 
 
 > There must be a better way !
 
+----
 
---
-
-# (re)-Introducting `python_requires`
+# The new* way: Python-Requires
+<!--# (re)-Introducting `python_requires`-->
 
 Since December with pip 9.0.1, and setuptools 24.3:
 
