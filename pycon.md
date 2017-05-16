@@ -383,10 +383,9 @@ Kudos to @xavfernandez for making that possible.
 
 Pip should get Require-Python info **before** downloading the sdist.  
 
-Pip does that via the `/simple/` repository url:
+Pip does that by checking the `/simple/` repository url:
 
-Note: No need to download all sdists just to discover they are incompatible. 
-
+Note: There's no need to download all sdists just to discover their incompatibility. 
 -- 
 
 ### view-source:https://pypi.python.org/simple/pip/
@@ -408,19 +407,19 @@ Note: No need to download all sdists just to discover they are incompatible.
 
 -- 
 
-List files and now have `data-requires-python` with version
-specifications for each files.
+This lists files and now have `data-requires-python` with version
+specifications for each file.  
 
 This was done by amending [PEP 503](https://www.python.org/dev/peps/pep-0503/).
-
-If you are running (or maintain) a PyPI proxy please make sure it does
-understand the new `data-requires-python`.
+ 
+**N.B.**: If you are running (or maintain) a PyPI proxy please make sure it surfaces 
+new `data-requires-python`.
 
 -- 
 
 ## Pip
 
-Pip 9+ understands `data-requires-python`.
+Pip 9+ checks `data-requires-python`.
 
 https://github.com/pypa/pip/pull/3877
 
@@ -431,103 +430,115 @@ That's the main reason you want final users to upgrade to pip 9+ if you are not
 on pip 9+, pip will consider incompatible packages, download them and ... fail
 at some point. 
 
-
-
 -- 
 
-## Belly of the beast 
+## Patching PyPI & Warehouse: PyPI-legacy
 
-### Patching PyPI & Warehouse
-
-You likely know PyPI, that's usually where most people download their
+You likely know PyPI-legacy, that's usually where most people download their
 packages from when then `pip install`.
 
-But PyPI is old, its testing is sparse (i.e., non-existant), and its documentation is… 
-~~non-existant~~ not always accurate. 
-
-As a result, it's not easy to run PyPI locally.
+But PyPI is old, its testing is sparse, and its documentation is not always
+accurate. It's not easy to run PyPI locally.
 
 -- 
+ 
+## Patching PyPI & Warehouse: Warehouse
+The PyPA stated developing Warehouse (the new, improved PyPI) with 100% test
+coverage and solid documentation. 
 
-The PyPA stated developing Warehouse (the new, improved PyPI), which is well
-documented, with 100% test coverage. It even has a one liner to run it locally
-using Docker. 
+It even has a one liner to run it locally using Docker!
 
--- 
+--
 
-In production, PyPI and warehouse are connected to the same Postgres database.  
+## Patching PyPI & Warehouse: Postgres
+
+PyPI and warehouse are connected to the same Postgres database.  
 So any updates need to be coördinated between them. 
 
--- 
+--
+# Tying it together 
 
-It seems like it should be easy… 
+It seems like it should be straightforward… 
 
-When you need the `/simple/<package>` webpage the sql query should simply be:
+When you need the `/simple/<package>` webpage,  
+the sql query should simply be:
 
 ```sql
 SELECT * from release_files where package_name=package
 ```
 
-And build a list of href. 
-
-Problem solved, right? 
-
--- 
-
-Unforutnately PEP 345 specifies that `requires-python` is an attribute 
-on **releases**, not **release files**.
-
-I.e., you can't have a wheel which is python 3.3+ and a sdist 3.2+.
-
-TODO: Matthias, I don't follow this point… why would you want wheels vs sdists 
-from the same release to be different?
+Parse that, build a list of `hrefs` and `data-requires-python` values,
+and you're done. Right? 
 
 -- 
+## Patching PyPI & Warehouse: dancing between tables 
 
-Because `release` is a different table from `release_files`, in theory, 
-we could use a `JOIN` for the two tables. 
+PEP 345 specifies that `requires-python` is an attribute on releases, not
+release files.
 
-Except, with the number of available packages, a join is too slow. 
+On the one hand, that makes sense:  
+we distribute files, which make up releases.
 
-On the other hand, we cannot safely refactor the database because PyPI is not well tested.
+On the other hand, the simple implementation won't work:
+* release files are specified in the `release_files` table 
+* releases are specified in the `releases` table
+
+-- 
+## Patching PyPI & Warehouse: dancing between tables 
+
+In theory, we could use a `JOIN` on the two tables. 
+
+Except, with the number of available packages, a `JOIN` is too slow. 
+
+At the same time, we cannot safely refactor the database because PyPI-legacy is not well tested.
 
 --
 
-#### Solution: A trigger on UPSERT
+## Solution: Triggers 
 
-We implemented a trigger that updates the `release_files` table when it or `release` are 
-updated or a row is inserted in either table.
+The `JOIN` was doing too much work;  
+it'd be better if we could update only the necessary rows.
 
-Detail: `UPSERT` is a combination of update and insert, using it greatly simplifies the logic.
+Triggers solve exactly that problem. 
 
---
+We use a trigger to update the `release_files` table when it or `releases` are 
+updated (or a row is inserted in either table).
 
-#### Final comments: Warehouse & PyPI
+Detail: `UPSERT` is a combination of update and insert, greatly simplifying the
+logic.
 
-We've improved the documentation of both warehouse and PyPI, to make new contributions easier.
-
-And you should contribute — there's tonnes of low hanging fruit!
-
-You can add tests, clean up the codebase, or bring features from PyPI to Warehouse.
-
--- 
+---- 
 
 
-----
 
-# Conclusion
+# Conclusions
 
 -- 
- - use pip 9+
- - upgrade setuptools
- - Question and Contribution to gotchas, read and contribute to
-      python3statement practicalities section.
- - Transition got relatively well for IPython ! You can do that same, likely
-   better.
+ 
+## On IPython 
+
+ - IPython 6+ is Python3 only
  - We're still updating the IPython 5.x – Python 2 LTS branch
+ - Transition has gone relatively well for IPython! 
+    - You can do that same, likely better (you've got our experience to learn from).
 
+--
 
+## On switching your package to Python3 only 
+ - upgrade setuptools
+ - use pip 9+, encourage your users to do the same
+ - fix your documentation (use pip, not `setup.py`!)
+ - catch incompatibilty early in py2 compatible `__init__.py` and `setup.py`
+ - Read and contribute to python3statement practicalities section
+   - questions, gotchas, &c.
 
+--
+## On contributing to packaging infrastructure 
+
+ - We've improved the documentation of both warehouse and PyPI, to make new
+   contributions easier.
+ - You should contribute — there's tonnes of low hanging fruit!
+ - Add tests, clean up the codebase, or bring features from PyPI to Warehouse.
 
 
 ----
