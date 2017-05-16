@@ -517,28 +517,28 @@ logic.
  
 ## On IPython 
 
- - IPython 6+ is Python3 only
- - We're still updating the IPython 5.x – Python 2 LTS branch
- - Transition has gone relatively well for IPython! 
-    - You can do that same, likely better (you've got our experience to learn from).
+- IPython 6+ is Python3 only
+- We're still updating the IPython 5.x – Python 2 LTS branch
+- Transition has gone relatively well for IPython! 
+   - It will only get easier!
 
 --
 
 ## On switching your package to Python3 only 
- - upgrade setuptools
- - use pip 9+, encourage your users to do the same
- - fix your documentation (use pip, not `setup.py`!)
- - catch incompatibilty early in py2 compatible `__init__.py` and `setup.py`
- - Read and contribute to python3statement practicalities section
-   - questions, gotchas, &c.
+- upgrade setuptools
+- use pip 9+, encourage your users to do the same
+- fix your documentation (use pip, not `setup.py`!)
+- catch early in py2 compatible `__init__.py` and `setup.py`
+- Read and contribute to python3statement practicalities section
+  - questions, gotchas, &c.
 
 --
 ## On contributing to packaging infrastructure 
 
- - We've improved the documentation of both warehouse and PyPI, to make new
-   contributions easier.
- - You should contribute — there's tonnes of low hanging fruit!
- - Add tests, clean up the codebase, or bring features from PyPI to Warehouse.
+- We've improved the documentation of both warehouse and PyPI, to make new
+  contributions easier.
+- You should contribute — there's tonnes of low hanging fruit!
+- Add tests, clean up the codebase, or bring features from PyPI to Warehouse.
 
 
 ----
