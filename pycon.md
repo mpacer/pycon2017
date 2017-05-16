@@ -528,7 +528,7 @@ logic.
 - upgrade setuptools
 - use pip 9+, encourage your users to do the same
 - fix your documentation (use pip, not `setup.py`!)
-- catch incompatibilty early in py2 compatible `__init__.py` and `setup.py`
+- catch early in py2 compatible `__init__.py` and `setup.py`
 - Read and contribute to python3statement practicalities section
   - questions, gotchas, &c.
 
