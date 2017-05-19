@@ -27,7 +27,18 @@ github:@Carreau/twitter:@Mbussonn
 
 github:@mpacer/twitter:@mdpacer
 
+--
+
+![](affiliation.png)
+
+-- 
+![](jupytercon.jpg)
+
+jupytercon.com – August 22-25; NYC
+
 ----
+
+
 
 ## What this talk is **not** about
 
@@ -73,6 +84,8 @@ Note: We should have text notes here to simplify reading this off.
 
 ![p3s-list](p3s-timeline.png)
 
+Timeline of Python 2 End of Life for various projects.
+
 Note: We should have text notes here to simplify reading this off.
 
 ----
@@ -102,7 +115,7 @@ SyntaxWarningErrorError("I Just don't like you.")
 
 ----
 
-# [Not really] Solutions
+#  Solutions (Not really)
 
 Let's go back to 2016.
 
@@ -184,7 +197,7 @@ As Raymond Hettinger would say if he is in the room
 
 ----
 
-# The new\* way: Python-Requires
+# The new way: Python-Requires
 <!--# (re)-Introducting `python_requires`-->
 
 Since December with pip 9.0.1, and setuptools 24.3:
@@ -261,18 +274,28 @@ Great! How do we use it?
 
 ## Setuptools
 
-As of [setuptools 24.2](https://github.com/pypa/setuptools/pull/631/), 
-your `setup()` call follows the `python_requires` keyword when building a package from source.
+As of [setuptools 24.2](https://github.com/pypa/setuptools/pull/631/): 
 
-Kudos to @xavfernandez for making that possible.
+```python
+# setup.py
+
+setup(..., 
+    python_requires='>=3.4'
+)
+```
+
+Note: @xavfernandez for making that possible.
 
 -- 
 
-## Pypi
+## PyPI
 
-Pip should get Require-Python info **before** downloading the sdist.  
+[PEP 503](https://www.python.org/dev/peps/pep-0503/) defines how content is
+formatted in `/simple/` repositories. 
 
-Pip does that by checking the `/simple/` repository url:
+Require-Python info is specified in `data-requires-python` attribute
+
+Pip check `data-requires-python` **before** downloading the sdist.  
 
 Note: There's no need to download all sdists just to discover their incompatibility. 
 -- 
@@ -286,7 +309,7 @@ Note: There's no need to download all sdists just to discover their incompatibil
 <a href="…/pip-6.0.4.tar.gz" >pip-6.0.4.tar.gz</a><br/>
 <a href="…/pip-0.3.1.tar.gz" >pip-0.3.1.tar.gz</a><br/>
 <a href="…/pip-1.0.1.tar.gz" >pip-1.0.1.tar.gz</a><br/>
-<a data-requires-python="&gt;=2.6,!=3.0.*" href="…/pip-9.0.1.tar.gz" >pip-9.0.1.tar.gz</a><br/>
+<a data-requires-python=">=2.6,!=3.0.*" href="…/pip-9.0.1.tar.gz" >pip-9.0.1.tar.gz</a><br/>
 <a href="…/pip-1.0.2.tar.gz" >pip-1.0.2.tar.gz</a><br/>
 <a href="…/pip-0.3.tar.gz" >pip-0.3.tar.gz</a><br/>
 <a href="…/pip-0.8.2.tar.gz" >pip-0.8.2.tar.gz</a><br/>
@@ -296,13 +319,8 @@ Note: There's no need to download all sdists just to discover their incompatibil
 
 -- 
 
-This lists files and now have `data-requires-python` with version
-specifications for each file.  
-
-This was done by amending [PEP 503](https://www.python.org/dev/peps/pep-0503/).
- 
 **N.B.**: If you are running (or maintain) a PyPI proxy please make sure it surfaces 
-new `data-requires-python`.
+new `data-requires-python`. PEP 503 
 
 -- 
 
